@@ -860,11 +860,11 @@ function Index() {
           <h2 className="font-display text-5xl md:text-7xl">Services</h2>
           <span className="font-mono text-xs text-muted-foreground">/ 06</span>
         </div>
-        <div className="grid md:grid-cols-3 gap-px bg-border mt-px">
+        <div className="grid grid-cols-1 gap-0 bg-border mt-px md:grid-cols-3 md:gap-px">
           {services.map((s) => (
-            <div key={s.n} className="min-h-[96px] bg-secondary p-4 md:min-h-[280px] md:p-10 flex flex-col justify-between hover:bg-background transition">
-              <span className="font-mono text-xs text-muted-foreground">{s.n}</span>
-              <div className="min-w-0">
+            <div key={s.n} className="flex min-h-[96px] items-center gap-3 border-b border-border bg-secondary p-4 transition hover:bg-background md:min-h-[280px] md:flex-col md:items-stretch md:justify-between md:border-b-0 md:p-10">
+              <span className="shrink-0 font-mono text-xs text-muted-foreground md:self-auto">{s.n}</span>
+              <div className="min-w-0 flex-1 md:flex-none">
                 <div className="flex items-center gap-3">
                   {(() => {
                     const ServiceIcon = serviceIcons[s.n as keyof typeof serviceIcons];
