@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
-import { Instagram, Mail, Phone, Pause, Play, Volume2, VolumeX, Maximize2, Minimize2, MoreVertical, Menu, X } from "lucide-react";
+import { Instagram, Mail, Phone, Pause, Play, Volume2, VolumeX, Maximize2, Minimize2, MoreVertical, Menu, X, Smartphone, Clapperboard, Music2, PartyPopper, Orbit, Palette } from "lucide-react";
 import { toast } from "sonner";
 import {
   Carousel,
@@ -183,12 +183,21 @@ const timelines = [
 
 const services = [
   { n: "01", t: "Social Media Reels", d: "Fast, hooky short-form edits for social. Rhythm-first, platform-ready and built to hold attention." },
-  { n: "02", t: "Commercial Editing", d: "Brand-grade edits with pacing, structure and polish that make the product stand out." },
+  { n: "02", t: "Montages", d: "Brand-grade edits with pacing, structure and polish that make the product stand out." },
   { n: "03", t: "Music Videos", d: "Concept-driven cuts for artists — performance, story, atmosphere and attitude." },
   { n: "04", t: "Event / Nightlife Recaps", d: "High-energy edits that capture the crowd, the atmosphere and the moments people remember." },
   { n: "05", t: "Motion Graphics", d: "Titles, transitions and animated visuals that give your edit more personality and impact." },
   { n: "06", t: "Color Grading & Sound Design", d: "Final-pass polish through intentional color, clean audio and sound that makes every cut hit harder." },
 ];
+
+const serviceIcons = {
+  "01": Smartphone,
+  "02": Clapperboard,
+  "03": Music2,
+  "04": PartyPopper,
+  "05": Orbit,
+  "06": Palette,
+};
 
 function Marquee() {
   const line = "Reels  ·  Montages  ·  Sound Design  ·  Color Grading  ·  ";
@@ -525,7 +534,6 @@ function ReelCard({ reel }: { reel: (typeof reels)[number] }) {
   };
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-center font-mono text-[10px] uppercase tracking-widest text-primary">{reel.id}</div>
       <div ref={playerFrameRef} className="video-player-frame group relative aspect-[3/5] overflow-hidden rounded-[2rem] border-[5px] border-foreground/80 bg-black p-0 shadow-[0_0_0_1px_var(--color-border),0_18px_35px_rgba(0,0,0,0.35)]">
       <button type="button" aria-label="Fullscreen reel" onClick={toggleFullscreen} className="absolute right-3 top-3 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded bg-black/60 text-white opacity-100 shadow-lg transition-opacity duration-200 hover:bg-black/75 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100">
         <Maximize2 className="h-4 w-4" />
@@ -647,7 +655,7 @@ function Index() {
       `}</style>
 
       {/* NAV */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur border-b border-border">
+      <header className="relative sticky top-0 z-40 bg-background/80 backdrop-blur border-b border-border">
         <div className="flex items-center justify-between px-5 sm:px-6 md:px-10 py-4 md:py-5">
         <a href="#top" aria-label="Jon Nitaj home" className="flex h-10 w-10 items-center justify-center overflow-hidden sm:h-12 sm:w-12">
           <img src="/joni-logo.png" alt="Jon Nitaj logo" className="h-full w-full object-contain" />
@@ -678,10 +686,12 @@ function Index() {
         </div>
         <nav
           aria-hidden={!mobileMenuOpen}
-          className={`mobile-menu-panel ${!mobileMenuOpen ? "is-closing" : ""} md:hidden overflow-hidden px-6 font-mono text-xs uppercase tracking-widest transition-[max-height,opacity,transform,padding] duration-700 ease-in-out ${mobileMenuOpen ? "max-h-96 border-t border-border py-4 translate-y-0 opacity-100" : "pointer-events-none max-h-0 border-t-0 py-0 -translate-y-2 opacity-0"}`}
+          className={`mobile-menu-panel absolute left-0 right-0 top-full ${!mobileMenuOpen ? "is-closing" : ""} md:hidden overflow-hidden bg-background/95 px-6 font-mono text-sm uppercase tracking-widest shadow-lg transition-[max-height,opacity,transform,padding] duration-700 ease-in-out ${mobileMenuOpen ? "max-h-96 border-t border-border py-4 translate-y-0 opacity-100" : "pointer-events-none max-h-0 border-t-0 py-0 -translate-y-2 opacity-0"}`}
         >
             {[
               ["Reels", "#reels"],
+              ["Montages", "#montages"],
+              ["Timeline", "#timeline"],
               ["Services", "#services"],
               ["About", "#about"],
               ["Contact", "#contact"],
@@ -770,7 +780,7 @@ function Index() {
           <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Trusted by</span>
           <span className="font-mono text-xs text-muted-foreground">/ 04</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border border-b border-border">
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border border-x border-b border-border md:border-x-0">
           {clients.map((c) => (
             <div
               key={c.name}
@@ -791,22 +801,23 @@ function Index() {
       </section>
 
       {/* REELS */}
-      <section id="reels" className="scroll-mt-20 px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
-        <div className="flex items-end justify-between mb-8 md:mb-10">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">/ Reels</span>
-            <h2 className="mt-3 font-display text-4xl sm:text-5xl md:text-7xl">Vertical Cuts</h2>
+      <section id="reels" className="scroll-mt-24 px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
+        <div className="relative flex items-end justify-between mb-4 md:mb-10">
+          <div className="w-full text-center md:w-auto md:text-left">
+            <span className="absolute left-0 top-0 font-mono text-xs uppercase tracking-widest text-muted-foreground md:static">/ Reels</span>
+            <h2 className="mt-[4.5rem] font-display text-4xl sm:text-5xl md:mt-3 md:text-7xl">Vertical Cuts</h2>
           </div>
           <span className="font-mono text-xs text-muted-foreground hidden md:block">↳ tap to play with sound</span>
+          <span className="absolute right-0 top-0 font-mono text-xs text-muted-foreground md:hidden">swipe for more →</span>
         </div>
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
-          <CarouselContent className="-ml-4">
+          <CarouselContent className="ml-0 sm:-ml-4">
             {reels.map((r) => (
               <CarouselItem
                 key={r.id}
-                className="pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                className="basis-full pl-0 sm:basis-1/2 sm:pl-4 md:basis-1/3 lg:basis-1/4"
               >
-                <div className="mx-auto w-full lg:max-w-[22rem]">
+                <div className="mx-auto w-full max-w-[18rem] sm:max-w-none lg:max-w-[22rem]">
                   <ReelCard reel={r} />
                 </div>
               </CarouselItem>
@@ -818,42 +829,50 @@ function Index() {
       </section>
 
       {/* MONTAGES */}
-      <section id="montages" className="px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
-        <div className="flex items-end justify-between mb-8 md:mb-10">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">/ Montage</span>
-            <h2 className="mt-3 max-w-[12ch] font-display text-4xl sm:text-5xl md:max-w-none md:text-7xl leading-[0.95]">Montages & Sound Design</h2>
+      <section id="montages" className="scroll-mt-24 px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
+        <div className="relative flex items-end justify-between mb-8 md:mb-10">
+          <div className="w-full text-center md:w-auto md:text-left">
+            <span className="absolute left-0 top-0 font-mono text-xs uppercase tracking-widest text-muted-foreground md:static">/ Montage</span>
+            <h2 className="mt-[4.5rem] max-w-none whitespace-nowrap font-display text-4xl sm:text-5xl md:mt-3 md:text-7xl leading-[0.95]">Montages & Sound Design</h2>
           </div>
-          <span className="font-mono text-xs text-muted-foreground hidden md:block">↳ press play</span>
+          <span className="font-mono text-xs text-muted-foreground hidden md:block">↳ tap to play with sound</span>
+          <span className="absolute right-0 top-0 font-mono text-xs text-muted-foreground md:hidden">swipe for more →</span>
         </div>
         <LandscapeCarousel items={montages} />
       </section>
 
       {/* TIMELINE */}
-      <section id="timeline" className="px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
-        <div className="flex items-end justify-between mb-8 md:mb-10">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">/ Timeline</span>
-            <h2 className="mt-3 max-w-[11ch] font-display text-4xl sm:text-5xl md:max-w-none md:text-7xl leading-[0.95]">Timeline Breakdowns</h2>
+      <section id="timeline" className="scroll-mt-24 px-5 sm:px-6 md:px-14 lg:px-16 py-8 md:py-12 border-t border-border">
+        <div className="relative flex items-end justify-between mb-8 md:mb-10">
+          <div className="w-full text-center md:w-auto md:text-left">
+            <span className="absolute left-0 top-0 font-mono text-xs uppercase tracking-widest text-muted-foreground md:static">/ Timeline</span>
+            <h2 className="mt-[4.5rem] max-w-none font-display text-4xl sm:text-5xl md:mt-3 md:text-7xl leading-[0.95]">Timeline Breakdowns</h2>
           </div>
-          <span className="font-mono text-xs text-muted-foreground hidden md:block">↳ swipe through</span>
+          <span className="font-mono text-xs text-muted-foreground hidden md:block">↳ tap to play with sound</span>
+          <span className="absolute right-0 top-0 font-mono text-xs text-muted-foreground md:hidden">swipe for more →</span>
         </div>
         <LandscapeCarousel items={timelines} />
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="px-5 sm:px-6 md:px-10 py-8 md:py-12 bg-secondary">
+      <section id="services" className="scroll-mt-24 px-5 sm:px-6 md:px-10 py-8 md:py-12 bg-secondary">
         <div className="flex items-baseline justify-between border-b border-border pb-4">
           <h2 className="font-display text-5xl md:text-7xl">Services</h2>
           <span className="font-mono text-xs text-muted-foreground">/ 06</span>
         </div>
         <div className="grid md:grid-cols-3 gap-px bg-border mt-px">
           {services.map((s) => (
-            <div key={s.n} className="min-h-[170px] bg-secondary p-6 md:min-h-[280px] md:p-10 flex flex-col justify-between hover:bg-background transition">
+            <div key={s.n} className="min-h-[96px] bg-secondary p-4 md:min-h-[280px] md:p-10 flex flex-col justify-between hover:bg-background transition">
               <span className="font-mono text-xs text-muted-foreground">{s.n}</span>
               <div className="min-w-0">
-                <h3 className="break-words font-display text-3xl sm:text-4xl md:text-5xl leading-[0.95]">{s.t}</h3>
-                <p className="mt-4 text-sm sm:text-base leading-relaxed text-muted-foreground">{s.d}</p>
+                <div className="flex items-center gap-3">
+                  {(() => {
+                    const ServiceIcon = serviceIcons[s.n as keyof typeof serviceIcons];
+                    return <ServiceIcon className="h-6 w-6 shrink-0 text-primary md:h-8 md:w-8" strokeWidth={1.75} aria-hidden="true" />;
+                  })()}
+                  <h3 className="break-words font-display text-2xl sm:text-4xl md:text-5xl leading-[0.95]">{s.t}</h3>
+                </div>
+                <p className="mt-4 hidden text-sm sm:text-base leading-relaxed text-muted-foreground md:block">{s.d}</p>
               </div>
             </div>
           ))}
@@ -861,7 +880,7 @@ function Index() {
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="px-5 sm:px-6 md:px-10 py-12 md:py-16">
+      <section id="about" className="scroll-mt-24 px-5 sm:px-6 md:px-10 py-12 md:py-16">
         <div className="grid md:grid-cols-12 gap-10">
           <div className="md:col-span-5">
             <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">About</span>
@@ -896,7 +915,7 @@ function Index() {
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="scroll-mt-20 px-6 sm:px-8 md:px-16 lg:px-20 py-12 md:py-16 border-t border-border">
+      <section id="contact" className="scroll-mt-24 px-6 sm:px-8 md:px-16 lg:px-20 py-12 md:py-16 border-t border-border">
         <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Contact</span>
         <div className="mt-4 grid items-end gap-6 md:grid-cols-12">
           <h2 className="font-display text-[14vw] leading-[0.9] md:col-span-6 md:text-[8vw]">
