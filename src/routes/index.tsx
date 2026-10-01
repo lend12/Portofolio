@@ -195,6 +195,7 @@ function LandscapeVideoCard({
   const [playing, setPlaying] = useState(false);
   const [showCenterPlay, setShowCenterPlay] = useState(true);
   const [muted, setMuted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [fullScreen, setFullScreen] = useState(false);
@@ -238,7 +239,11 @@ function LandscapeVideoCard({
       if (event.source !== iframeRef.current?.contentWindow) return;
       let data: { event?: string; method?: string; data?: { seconds?: number; duration?: number }; value?: number };
       try { data = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } catch { return; }
-      if (data.event === "finish") setPlaying(false);
+      if (data.event === "play") {
+        setHasStarted(true);
+        setPlaying(true);
+      }
+      if (data.event === "pause" || data.event === "finish") setPlaying(false);
       if (data.event === "fullscreenchange") {
         setFullScreen((data.data as unknown) === true);
         return;
@@ -276,21 +281,29 @@ function LandscapeVideoCard({
           <Maximize2 className="h-4 w-4" />
         </button>
         {item.embedUrl ? (
-          <iframe
-            title={item.title}
-            ref={iframeRef}
-            src={`${item.embedUrl}&controls=0`}
-            onLoad={() => {
-              ["play", "pause", "finish", "timeupdate", "fullscreenchange"].forEach((event) => sendVimeo("addEventListener", event));
-              window.setTimeout(() => sendVimeo("getDuration"), 300);
-            }}
-            loading="lazy"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            allowFullScreen
-            referrerPolicy="strict-origin-when-cross-origin"
-            webkitallowfullscreen="true"
-            className="pointer-events-none absolute inset-0 z-10 block h-full w-full scale-[1.05] border-0 touch-auto md:pointer-events-auto"
-          />
+          <>
+            <iframe
+              title={item.title}
+              ref={iframeRef}
+              src={`${item.embedUrl}&controls=0`}
+              onLoad={() => {
+                ["play", "pause", "finish", "timeupdate", "fullscreenchange"].forEach((event) => sendVimeo("addEventListener", event));
+                window.setTimeout(() => sendVimeo("getDuration"), 300);
+              }}
+              loading="eager"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+              webkitallowfullscreen="true"
+              className="pointer-events-none absolute inset-0 z-10 block h-full w-full scale-[1.05] border-0 touch-auto md:pointer-events-auto"
+            />
+            <img
+              src={item.thumbnail}
+              alt=""
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 z-[15] h-full w-full object-cover transition-opacity duration-200 ${hasStarted ? "opacity-0" : "opacity-100"}`}
+            />
+          </>
         ) : (
           <video
             ref={videoRef}
@@ -314,6 +327,7 @@ function LandscapeVideoCard({
               if (item.embedUrl) {
                 const nextPlaying = !playing;
                 sendVimeo(nextPlaying ? "play" : "pause");
+                if (nextPlaying) setHasStarted(true);
                 setPlaying(nextPlaying);
               } else {
                 const nextPlaying = videoRef.current?.paused ?? true;
