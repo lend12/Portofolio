@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type MouseEvent } from "react";
 import { Instagram, Mail, Phone, Pause, Play, Volume2, VolumeX, Maximize2, Minimize2, MoreVertical, Menu, X, Smartphone, Clapperboard, Music2, PartyPopper, Orbit, Palette } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -469,6 +469,17 @@ function Index() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
+  const scrollToSection = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const hash = event.currentTarget.hash;
+    const target = document.querySelector<HTMLElement>(hash);
+    if (!target) return;
+    const headerHeight = document.querySelector<HTMLElement>("[data-site-header-bar]")?.getBoundingClientRect().height ?? 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    window.history.replaceState(null, "", hash);
+    setMobileMenuOpen(false);
+  };
   const copy = async (value: string, label: string) => {
     try {
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard API unavailable");
@@ -530,7 +541,7 @@ function Index() {
 
       {/* NAV */}
       <header className="relative sticky top-0 z-40 bg-background/80 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between px-5 sm:px-6 md:px-10 py-4 md:py-5">
+        <div data-site-header-bar className="flex items-center justify-between px-5 sm:px-6 md:px-10 py-4 md:py-5">
         <a href="#top" aria-label="Jon Nitaj home" className="flex h-10 w-10 items-center justify-center overflow-hidden sm:h-12 sm:w-12">
           <img src="/joni-logo.png" alt="Jon Nitaj logo" className="h-full w-full object-contain" />
         </a>
@@ -573,7 +584,7 @@ function Index() {
               <a
                 key={href}
                 href={href}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={scrollToSection}
                 className="block border-b border-border py-4 last:border-b-0 hover:text-primary transition"
               >
                 {label}
