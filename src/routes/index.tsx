@@ -45,31 +45,6 @@ const requestFullscreen = (
   if (fallback && fallback !== el) requestFullscreen(fallback);
 };
 
-/*
-  The browser-specific methods are intentionally accessed through the helper
-  above so iOS Safari can use its native video player.
-*/
-/* const legacyFullscreenTarget = (el: HTMLVideoElement | null) => {
-  if (!el) return;
-  const anyEl = el as HTMLVideoElement & {
-    webkitEnterFullscreen?: () => void;
-    webkitRequestFullscreen?: () => Promise<void>;
-  };
-  const resumeIfNeeded = () => undefined;
-  // iOS Safari — only the video element supports native fullscreen and
-  // preserves the video's own aspect ratio (reels stay vertical).
-  if (typeof anyEl.webkitEnterFullscreen === "function") {
-    anyEl.webkitEnterFullscreen();
-    resumeIfNeeded();
-    return;
-  }
-  if (typeof anyEl.requestFullscreen === "function") {
-    void anyEl.requestFullscreen().then(resumeIfNeeded).catch(() => undefined);
-  } else if (typeof anyEl.webkitRequestFullscreen === "function") {
-    void anyEl.webkitRequestFullscreen().then(resumeIfNeeded).catch(() => undefined);
-  }
-}; */
-
 export const Route = createFileRoute("/")({
   component: Index,
 });
@@ -224,7 +199,6 @@ function LandscapeVideoCard({
   const [duration, setDuration] = useState(0);
   const [fullScreen, setFullScreen] = useState(false);
   const [isScrubbing, setIsScrubbing] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     if (!playing) {
       setShowCenterPlay(true);
@@ -249,30 +223,22 @@ function LandscapeVideoCard({
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
   const toggleFullscreen = () => {
-    if (item.embedUrl) {
-      const nextFullScreen = !fullScreen;
-      sendVimeo(nextFullScreen ? "requestFullscreen" : "exitFullscreen");
-      setFullScreen(nextFullScreen);
+    if (item.embedUrl && window.matchMedia("(max-width: 767px)").matches) {
+      sendVimeo(fullScreen ? "exitFullscreen" : "requestFullscreen");
+      setFullScreen(!fullScreen);
       return;
     }
     if (document.fullscreenElement) void document.exitFullscreen();
     else requestFullscreen(playerFrameRef.current, videoRef.current);
   };
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const updateMobile = () => setIsMobile(media.matches);
-    updateMobile();
-    media.addEventListener("change", updateMobile);
-    return () => media.removeEventListener("change", updateMobile);
-  }, []);
-  useEffect(() => {
     if (!item.embedUrl) return;
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== "https://player.vimeo.com") return;
+      if (event.source !== iframeRef.current?.contentWindow) return;
       let data: { event?: string; method?: string; data?: { seconds?: number; duration?: number }; value?: number };
       try { data = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } catch { return; }
-      if (data.event === "play") setPlaying(true);
-      if (data.event === "pause" || data.event === "finish") setPlaying(false);
+      if (data.event === "finish") setPlaying(false);
       if (data.event === "fullscreenchange") {
         setFullScreen((data.data as unknown) === true);
         return;
@@ -305,7 +271,7 @@ function LandscapeVideoCard({
   const formatTime = (value: number) => `${Math.floor(value / 60)}:${Math.floor(value % 60).toString().padStart(2, "0")}`;
   return (
     <div className="flex flex-col gap-4">
-      <div ref={playerFrameRef} className="video-player-frame group relative aspect-video overflow-hidden rounded-[1.25rem] border-[5px] border-foreground/80 bg-black p-0 shadow-[0_0_0_1px_var(--color-border),0_18px_45px_rgba(0,0,0,0.45)]">
+      <div ref={playerFrameRef} className="video-player-frame group relative aspect-video overflow-hidden rounded-[1.25rem] border-0 bg-black p-0 shadow-[0_18px_45px_rgba(0,0,0,0.45)]">
         <button type="button" aria-label="Fullscreen video" onClick={toggleFullscreen} className="absolute right-3 top-3 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded bg-black/60 text-white opacity-100 shadow-lg transition-opacity duration-200 hover:bg-black/75 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100">
           <Maximize2 className="h-4 w-4" />
         </button>
@@ -406,67 +372,6 @@ function LandscapeCarousel({
   );
 }
 
-/* function GradientVideoCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const gradients = ["#182b54", "#5b202e", "#173e4a", "#43235a", "#6a341f", "#143d35", "#263868", "#552d47", "#1f4350"];
-  const visibleRadius = 3;
-
-  const move = (direction: number) => {
-    setActiveIndex((current) => (current + direction + reels.length) % reels.length);
-  };
-
-  return (
-    <div
-      className="relative w-full overflow-hidden rounded-md border border-border px-4 py-10 sm:px-8 md:py-14"
-      style={{ background: `radial-gradient(circle at 50% 45%, ${gradients[activeIndex]} 0%, transparent 62%), var(--color-background)` }}
-      onKeyDown={(event) => {
-        if (event.key === "ArrowLeft") move(-1);
-        if (event.key === "ArrowRight") move(1);
-      }}
-      tabIndex={0}
-      aria-label="Reels video carousel"
-    >
-      <div className="pointer-events-none absolute inset-0 bg-background/45 backdrop-blur-3xl" />
-      <div className="relative mx-auto h-[24rem] max-w-5xl sm:h-[28rem] md:h-[34rem]">
-        {reels.map((reel, index) => {
-          let position = index - activeIndex;
-          if (position > reels.length / 2) position -= reels.length;
-          if (position < -reels.length / 2) position += reels.length;
-          const visible = Math.abs(position) <= visibleRadius;
-          const scale = position === 0 ? 1 : Math.max(0.72, 1 - Math.abs(position) * 0.09);
-          const opacity = visible ? Math.max(0.25, 1 - Math.abs(position) * 0.2) : 0;
-
-          return (
-            <button
-              type="button"
-              key={reel.id}
-              onClick={() => setActiveIndex(index)}
-              className="absolute left-1/2 top-1/2 w-36 -translate-y-1/2 overflow-hidden rounded-md border border-white/20 bg-black shadow-2xl transition-[transform,opacity,filter] duration-700 ease-out sm:w-44 md:w-56"
-              style={{
-                transform: `translateX(calc(-50% + ${position * 145}px)) translateY(-50%) perspective(900px) rotateY(${position * -10}deg) rotateZ(${position * 4}deg) scale(${scale}) translateZ(${position === 0 ? 80 : -Math.abs(position) * 30}px)`,
-                opacity,
-                zIndex: 10 - Math.abs(position),
-                filter: position === 0 ? "none" : "brightness(0.72) saturate(0.8)",
-                pointerEvents: visible ? "auto" : "none",
-              }}
-            >
-              <video src={reel.src} poster={reel.thumbnail} muted loop playsInline autoPlay={position === 0} className="aspect-[9/16] w-full object-cover" />
-              <span className="absolute inset-x-2 bottom-2 truncate bg-black/55 px-2 py-1 text-left font-mono text-[9px] uppercase tracking-widest text-white">
-                {reel.id} · {reel.title}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-      <button type="button" aria-label="Previous reel" onClick={() => move(-1)} className="absolute left-3 top-1/2 z-20 -translate-y-1/2 border border-foreground/40 bg-background/70 px-3 py-2 font-mono text-xs transition hover:bg-foreground hover:text-background">←</button>
-      <button type="button" aria-label="Next reel" onClick={() => move(1)} className="absolute right-3 top-1/2 z-20 -translate-y-1/2 border border-foreground/40 bg-background/70 px-3 py-2 font-mono text-xs transition hover:bg-foreground hover:text-background">→</button>
-      <div className="relative z-20 mt-4 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Reels · drag with arrows or click a card</div>
-    </div>
-  );
-}
-
-} */
-
 function ReelCard({ reel }: { reel: (typeof reels)[number] }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerFrameRef = useRef<HTMLDivElement | null>(null);
@@ -475,7 +380,6 @@ function ReelCard({ reel }: { reel: (typeof reels)[number] }) {
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [isScrubbing, setIsScrubbing] = useState(false);
   useEffect(() => {
@@ -487,13 +391,6 @@ function ReelCard({ reel }: { reel: (typeof reels)[number] }) {
     const timer = window.setTimeout(() => setShowCenterPlay(false), 2500);
     return () => window.clearTimeout(timer);
   }, [playing]);
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const updateMobile = () => setIsMobile(media.matches);
-    updateMobile();
-    media.addEventListener("change", updateMobile);
-    return () => media.removeEventListener("change", updateMobile);
-  }, []);
   useEffect(() => {
     const onFullscreenChange = () => setFullScreen(document.fullscreenElement === playerFrameRef.current);
     document.addEventListener("fullscreenchange", onFullscreenChange);
@@ -511,7 +408,7 @@ function ReelCard({ reel }: { reel: (typeof reels)[number] }) {
   };
   return (
     <div className="flex flex-col gap-3">
-      <div ref={playerFrameRef} className="video-player-frame group relative aspect-[3/5] overflow-hidden rounded-[2rem] border-[5px] border-foreground/80 bg-black p-0 shadow-[0_0_0_1px_var(--color-border),0_18px_35px_rgba(0,0,0,0.35)]">
+      <div ref={playerFrameRef} className="video-player-frame group relative aspect-[3/5] overflow-hidden rounded-[2rem] border-0 bg-black p-0 shadow-[0_18px_35px_rgba(0,0,0,0.35)]">
       <button type="button" aria-label="Fullscreen reel" onClick={toggleFullscreen} className="absolute right-3 top-3 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded bg-black/60 text-white opacity-100 shadow-lg transition-opacity duration-200 hover:bg-black/75 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100">
         <Maximize2 className="h-4 w-4" />
       </button>
