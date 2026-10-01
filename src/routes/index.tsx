@@ -84,44 +84,19 @@ const clients = [
 
 const reels = [
   {
-    id: "R1",
-    title: "About Last Night · Moss × Kida",
-    src: "/videos/About last night w- @moss.della x @kida.mp4", thumbnail: "/thumbnails/moss-kida.jpg",
-  },
-  {
-    id: "R2",
-    title: "Credins Unum Giveaway",
-    src: "/videos/Credins_Unum_Giveaway_V1.mp4", thumbnail: "/thumbnails/credins.jpg",
-  },
-  {
     id: "R3",
     title: "Mercedes Video",
-    src: "/videos/joni mercedes video.mp4", thumbnail: "/thumbnails/mercedes.jpg",
-  },
-  {
-    id: "R4",
-    title: "Last Night · Noizy",
-    src: "/videos/Last night with @noizy, madness 🔥.mp4", thumbnail: "/thumbnails/noizy.jpg",
+    src: "/videos/Joni Mercedes Video.mp4", thumbnail: "/thumbnails/mercedes.jpg",
   },
   {
     id: "R5",
     title: "Monday Went Down Like This",
-    src: "/videos/Monday went down like this 🔥.mp4", thumbnail: "/thumbnails/monday.jpg",
+    src: "/videos/Monday Went Down Like This 🔥.mp4", thumbnail: "/thumbnails/monday.jpg",
   },
   {
     id: "R6",
     title: "OutSorcy in 60 Seconds",
-    src: "/videos/OutSorcy in 60 seconds_V3.mp4", thumbnail: "/thumbnails/outsorcy-60.jpg",
-  },
-  {
-    id: "R7",
-    title: "Outsorcy Video 04",
-    src: "/videos/Outsorcy_Video 4_V4.mp4", thumbnail: "/thumbnails/outsorcy-04.jpg",
-  },
-  {
-    id: "R8",
-    title: "Zone · 19.09.25",
-    src: "/videos/Zone_19.09.25_V2.mp4", thumbnail: "/thumbnails/zone-19.jpg",
+    src: "/videos/Outsorcy In 60 Seconds V3.mp4", thumbnail: "/thumbnails/outsorcy-60.jpg",
   },
   {
     id: "R9",
