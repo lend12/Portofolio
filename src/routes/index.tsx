@@ -78,6 +78,7 @@ const clients = [
   { name: "Zone Club", logo: zoneLogo },
   { name: "Gate Club", logo: gateLogo },
   { name: "Outsorcy", logo: outsorcyLogo },
+  { name: "Redbee Agency", logo: redbeeLogo },
 ];
 
 const reels = [
