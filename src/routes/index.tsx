@@ -148,13 +148,13 @@ const timelines = [
     id: "T1",
     kind: "Timeline",
     title: "Gate Club",
-    src: "/videos/GATE TIMELINE JONKEY.mp4", thumbnail: "/thumbnails/gate-jonkey.jpg",
+    src: "/videos/Gate Timeline Jonkey.mp4", thumbnail: "/thumbnails/gate-jonkey.jpg",
   },
   {
     id: "T2",
     kind: "Timeline",
     title: "Nora Cimili",
-    src: "/videos/NoraCimili_Timeline.mp4", thumbnail: "/thumbnails/nora-cimili.jpg",
+    src: "/videos/Noracimili Timeline.mp4", thumbnail: "/thumbnails/nora-cimili.jpg",
   },
 ];
 
