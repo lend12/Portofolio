@@ -13,6 +13,7 @@ import tatamataLogo from "@/assets/tatamata-logo.png";
 import zoneLogo from "@/assets/zone logo.jpg";
 import gateLogo from "@/assets/gate club logo.jpg";
 import outsorcyLogo from "@/assets/outsorcy logo.jpg";
+import redbeeLogo from "@/assets/redbee-agency-logo.jpg";
 import premiereProLogo from "@/assets/premiere-pro-logo.webp";
 import afterEffectsLogo from "@/assets/after-effects-logo.webp";
 import photoshopLogo from "@/assets/ps-logo.webp";
@@ -125,7 +126,7 @@ const reels = [
   {
     id: "R9",
     title: "Zone · Buta",
-    src: "/videos/ZONE_BUTA_22.10.2025.mp4", thumbnail: "/thumbnails/zone-buta.jpg",
+    src: "/videos/Zone Buta 22.10.2025(1).mp4", thumbnail: "/thumbnails/zone-buta.jpg",
   },
 ];
 
@@ -779,19 +780,19 @@ function Index() {
       <section className="px-5 sm:px-6 md:px-10 py-8 md:py-12">
         <div className="flex items-baseline justify-between border-b border-border pb-4">
           <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Trusted by</span>
-          <span className="font-mono text-xs text-muted-foreground">/ 04</span>
+          <span className="font-mono text-xs text-muted-foreground">/ 05</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border border-x border-b border-border md:border-x-0">
-          {clients.map((c) => (
+        <div className="grid grid-cols-2 gap-px border border-border bg-background md:hidden">
+          {clients.map((c, index) => (
             <div
               key={c.name}
-              className="py-12 px-6 flex flex-col items-center justify-center gap-4 hover:bg-secondary transition"
+              className={`flex flex-col items-center justify-center gap-4 bg-background px-6 py-12 transition hover:bg-secondary ${index === clients.length - 1 ? "col-span-2 w-1/2 justify-self-center" : "border border-border"}`}
             >
               <img
                 src={c.logo}
                 alt={`${c.name} logo`}
                 loading="lazy"
-                className="h-16 md:h-20 w-auto object-contain opacity-90"
+                className="h-16 w-auto object-contain opacity-90"
               />
               <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 {c.name}
@@ -799,6 +800,27 @@ function Index() {
             </div>
           ))}
         </div>
+        <Carousel opts={{ align: "start", loop: true }} className="hidden w-full border-x border-b border-border md:block">
+          <CarouselContent className="ml-0">
+            {clients.map((c) => (
+              <CarouselItem key={c.name} className="basis-1/2 border-r border-border p-0 md:basis-1/4">
+                <div className="flex min-h-48 flex-col items-center justify-center gap-4 px-6 py-12 transition hover:bg-secondary">
+                  <img
+                    src={c.logo}
+                    alt={`${c.name} logo`}
+                    loading="lazy"
+                    className="h-16 w-auto object-contain opacity-90 md:h-20"
+                  />
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {c.name}
+                  </span>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="-left-4 hidden sm:flex" />
+          <CarouselNext className="-right-4 hidden sm:flex" />
+        </Carousel>
       </section>
 
       {/* REELS */}
@@ -856,14 +878,14 @@ function Index() {
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="scroll-mt-24 px-5 sm:px-6 md:px-10 py-8 md:py-12 bg-secondary">
+      <section id="services" className="scroll-mt-24 px-5 sm:px-6 md:px-10 py-8 md:py-12 bg-background">
         <div className="flex items-baseline justify-between border-b border-border pb-4">
           <h2 className="font-display text-5xl md:text-7xl">Services</h2>
           <span className="font-mono text-xs text-muted-foreground">/ 06</span>
         </div>
         <div className="grid grid-cols-1 gap-0 bg-border mt-px md:grid-cols-3 md:gap-px">
           {services.map((s) => (
-            <div key={s.n} className="flex min-h-[96px] items-center gap-3 border-b border-border bg-secondary p-4 transition hover:bg-background md:min-h-[280px] md:flex-col md:items-stretch md:justify-between md:border-b-0 md:p-10">
+            <div key={s.n} className="flex min-h-[96px] items-center gap-3 border-b border-border bg-background p-4 transition hover:bg-background md:min-h-[280px] md:flex-col md:items-stretch md:justify-between md:border-b-0 md:p-10">
               <span className="shrink-0 font-mono text-xs text-muted-foreground md:self-auto">{s.n}</span>
               <div className="min-w-0 flex-1 md:flex-none">
                 <div className="flex items-center gap-3">
@@ -907,8 +929,8 @@ function Index() {
               commercials and music videos, the goal is the same: make it feel inevitable.
             </p>
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
-              <div><div className="font-display text-4xl text-foreground">100+</div><div className="font-mono text-[10px] uppercase tracking-widest">videos shipped</div></div>
-              <div><div className="font-display text-4xl text-foreground">4</div><div className="font-mono text-[10px] uppercase tracking-widest">recurring clients</div></div>
+              <div><div className="font-display text-4xl text-foreground">400+</div><div className="font-mono text-[10px] uppercase tracking-widest">videos shipped</div></div>
+              <div><div className="font-display text-4xl text-foreground">10+</div><div className="font-mono text-[10px] uppercase tracking-widest">recurring clients</div></div>
               <div><div className="font-display text-4xl text-foreground">24h</div><div className="font-mono text-[10px] uppercase tracking-widest">reel turnaround</div></div>
             </div>
           </div>
@@ -1008,6 +1030,7 @@ function Index() {
 
       <footer className="px-6 md:px-10 py-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         <span>© {new Date().getFullYear()} Jon Nitaj · Video Editor</span>
+        <span>Site by LH</span>
         <span>Prishtina — Kosovo</span>
       </footer>
     </div>
