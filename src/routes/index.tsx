@@ -175,8 +175,8 @@ function Filmstrip() {
     <div className="relative overflow-hidden rounded bg-transparent py-1.5">
       <span className="absolute inset-x-0 top-0.5 z-30 text-center font-mono text-xs font-semibold uppercase tracking-[0.25em] text-foreground">{label}</span>
       <div className="absolute left-0 right-0 top-1 flex justify-around px-1">{Array.from({ length: 10 }).map((_, i) => <span key={i} className="h-1 w-2 rounded-sm bg-background/80" />)}</div>
-      <div className={`filmstrip-track filmstrip-fade mb-0.5 mt-7 flex w-max ${gap} will-change-transform ${className}`}>
-        {items.map((item, i) => <div key={`${item.id}-${i}`} className={`relative shrink-0 overflow-hidden border-2 border-foreground/80 bg-black ${frame === "phone" ? "rounded-[0.8rem]" : "rounded-[0.55rem]"} ${size}`}><img src={item.thumbnail} alt="" aria-hidden="true" className="h-full w-full object-cover opacity-90" />{frame === "phone" && <span className="absolute left-1/2 top-0.5 h-1 w-5 -translate-x-1/2 rounded-full bg-black" />}</div>)}
+      <div className={`filmstrip-track mb-0.5 mt-7 flex w-max ${gap} will-change-transform ${className}`}>
+        {items.map((item, i) => <div key={`${item.id}-${i}`} className={`relative shrink-0 overflow-hidden bg-black ${frame === "phone" ? "rounded-[0.8rem]" : "rounded-[0.55rem]"} ${size}`}><img src={item.thumbnail} alt="" aria-hidden="true" className="h-full w-full object-cover opacity-90" /></div>)}
       </div>
       <div className="absolute bottom-1 left-0 right-0 flex justify-around px-1">{Array.from({ length: 10 }).map((_, i) => <span key={i} className="h-1 w-2 rounded-sm bg-background/80" />)}</div>
     </div>
